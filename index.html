@@ -1,73 +1,520 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dashboard Incidencias FAMATEL v16</title>
-<script src="libs/xlsx.full.min.js"></script>
-<script src="libs/chart.umd.min.js"></script>
-<style>
-:root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#68758b;--line:#e7eaf0;--blue:#2364aa;--green:#1d8b62;--amber:#d99016;--red:#c2413a;--purple:#7157d9;--shadow:0 10px 30px rgba(25,38,66,.08);--r:18px}
-*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
-header{position:sticky;top:0;z-index:20;background:rgba(245,247,251,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.wrap{max-width:1500px;margin:0 auto;padding:18px 22px}.top{display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap}.brand h1{margin:0;font-size:24px;letter-spacing:-.03em}.brand p{margin:5px 0 0;color:var(--muted);font-size:13px}.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.file{position:relative;overflow:hidden}.file input{position:absolute;inset:0;opacity:0;cursor:pointer}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 13px;border-radius:12px;font-weight:650;font-size:13px;cursor:pointer;box-shadow:0 3px 10px rgba(10,20,40,.04)}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn:hover{filter:brightness(.98)}
-.grid{display:grid;gap:16px}.kpis{grid-template-columns:repeat(4,minmax(180px,1fr));margin-top:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px}.kpi .label{font-size:13px;color:var(--muted);font-weight:650}.kpi .value{font-size:34px;letter-spacing:-.04em;font-weight:800;margin-top:8px}.kpi .hint{font-size:12px;color:var(--muted);margin-top:6px}.accent-blue{border-top:4px solid var(--blue)}.accent-green{border-top:4px solid var(--green)}.accent-amber{border-top:4px solid var(--amber)}.accent-red{border-top:4px solid var(--red)}.accent-purple{border-top:4px solid var(--purple)}
-.layout{grid-template-columns:1.05fr .95fr;margin-top:16px}.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.section-title h2{font-size:17px;margin:0}.section-title span{font-size:12px;color:var(--muted)}.responsables{grid-template-columns:repeat(3,1fr);gap:18px}.person{padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#fff,#fbfcff);box-shadow:0 8px 18px rgba(25,38,66,.05)}.person h3{margin:0 0 12px;font-size:20px}.person .nums{display:grid;grid-template-columns:1fr 1fr;gap:9px}.mini{background:#f7f9fd;border:1px solid var(--line);padding:9px;border-radius:12px}.mini b{font-size:21px}.mini span{display:block;color:var(--muted);font-size:11px;margin-top:3px}.state-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:12px}.state-chip{border:1px solid var(--line);border-radius:10px;background:#fff;padding:7px 8px;font-size:11px;line-height:1.2;color:#516078;text-align:left}.state-chip.clickable{cursor:pointer}.state-chip.clickable:hover{border-color:var(--blue);box-shadow:0 3px 10px rgba(35,100,170,.12)}.state-chip.active{border-color:var(--blue);background:#eaf1ff;box-shadow:0 4px 12px rgba(35,100,170,.16)}.active-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:0 2px}.active-filters b{color:var(--ink)}.linkbtn{border:0;background:#eef4ff;color:#1e4f9b;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;cursor:pointer}.state-chip b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}.person-title{display:flex;justify-content:space-between;align-items:center;gap:8px}.person-title span{font-size:12px;color:var(--muted);font-weight:650}.charts{grid-template-columns:1fr 1fr;margin-top:16px}.chartbox{height:310px}.wide{grid-column:1/-1}.filters{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px}.filters input,.filters select{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;min-width:160px}.toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
- table{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#fff;color:#516078;font-size:12px;text-transform:uppercase;letter-spacing:.04em}tr:hover td{background:#fbfcff}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 9px;font-weight:700;font-size:12px}.p-ok{background:#e8f6ee;color:#126342}.p-warn{background:#fff4df;color:#8a5300}.p-bad{background:#fdeceb;color:#9d2c26}.p-info{background:#eaf1ff;color:#1e4f9b}.muted{color:var(--muted)}.msg{margin-top:16px;border:1px dashed #b7c4d6;background:#fff;border-radius:16px;padding:14px;color:#516078}.quality{grid-template-columns:repeat(4,1fr);margin-top:16px}.smallnum{font-size:24px;font-weight:800}.footer{font-size:12px;color:var(--muted);padding:18px 0 30px}.hidden{display:none!important}@media(max-width:1050px){.kpis,.layout,.charts,.responsables,.quality{grid-template-columns:1fr}.chartbox{height:260px}.wrap{padding:14px}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Incidencias | FAMATEL</title>
+    <!-- Librerías locales para evitar bloqueos -->
+    <script src="libs/xlsx.full.min.js"></script>
+    <script src="libs/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --glass: rgba(255, 255, 255, 0.8);
+            --ink: #1e293b;
+            --muted: #64748b;
+            --primary: #2563eb;
+            --secondary: #6366f1;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            font-family: 'Outfit', sans-serif;
+            color: var(--ink);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            padding: 2rem;
+            color: white;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        header h1 { margin: 0; font-weight: 700; font-size: 2rem; letter-spacing: -0.5px; }
+        header p { margin: 0.5rem 0 0; opacity: 0.9; font-weight: 300; }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem 3rem;
+        }
+
+        /* Input Area */
+        .upload-section {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .upload-section:hover { transform: translateY(-2px); }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 99px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover { background: #1d4ed8; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
+
+        #fileInput {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0;
+            right: 0;
+            top: 0;
+            cursor: pointer;
+        }
+
+        /* KPIs */
+        .kpis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 6px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover { transform: scale(1.02); }
+        .kpi-card.warning { border-left-color: var(--warning); }
+        .kpi-card.success { border-left-color: var(--success); }
+        .kpi-card.danger { border-left-color: var(--danger); }
+
+        .kpi-label { font-size: 0.875rem; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+        .kpi-value { font-size: 2.25rem; font-weight: 700; margin: 0.25rem 0; }
+        .kpi-hint { font-size: 0.875rem; color: var(--muted); }
+
+        /* Charts Layout */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .chart-card h2 {
+            margin: 0 0 1.5rem;
+            font-size: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-card h2 span { font-size: 0.875rem; font-weight: 400; color: var(--muted); }
+
+        .chart-container { height: 300px; position: relative; }
+
+        /* Table */
+        .table-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 500px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--muted);
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        tbody tr:hover { background: #f8fafc; }
+
+        .status-pill {
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pendiente { background: #fef3c7; color: #92400e; }
+        .status-cerrada { background: #dcfce7; color: #166534; }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            .kpis-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
 </head>
 <body>
-<header><div class="wrap top"><div class="brand"><h1>Dashboard de Incidencias</h1><p>Gestión operativa por estado, responsable, tipo de incidencia y tiempos de cierre.</p></div><div class="actions"><label class="btn primary file">Cargar incidencias<input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.xml" /></label><label class="btn file">Actualizar maestro<input id="masterInput" type="file" accept=".xlsx,.xls,.csv" /></label><button class="btn" id="clearBtn">Limpiar info</button><button class="btn" id="exportBtn">Exportar CSV</button></div></div></header>
-<main class="wrap">
-<div id="empty" class="msg">Carga el archivo de incidencias de Mantis. El maestro de clientes ya está precargado; usa “Limpiar info” para vaciar el dashboard y empezar de nuevo.</div>
-<div id="dash">
-  <!-- Dashboard will be shown after initialization -->
+
+<div id="loader" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Procesando datos...</p>
 </div>
-<script>
-  // Simple init: show dashboard container on page load
-  document.addEventListener('DOMContentLoaded', function() {
-    const dash = document.getElementById('dash');
-    if (dash) dash.classList.remove('hidden');
-    console.log('Dashboard initialized');
-  });
-</script>
-  <div class="filters card">
-    <input id="q" placeholder="Buscar ID, cliente, resumen..." />
-    <select id="responsable"><option value="">Responsable: todos</option></select>
-    <select id="estado" multiple title="Estado: Ctrl+clic para seleccionar varios"></select>
-    <select id="tipoPend"><option value="">Pendiente: todas</option><option value="Reclamable">Reclamables</option><option value="No reclamable">No reclamables</option></select>
-    <select id="categoria"><option value="">Tipo incidencia: todas</option></select>
-    <label class="toggle"><input id="internas" type="checkbox" /> Incluir internas</label>
-    <button class="btn" id="clearFiltersBtn" type="button">Limpiar filtros</button>
-    <div id="activeFilters" class="active-filters">Filtros activos: todos</div>
-  </div>
-  <section class="grid kpis">
-    <div class="card kpi accent-amber"><div class="label">Pendientes de gestionar</div><div id="kPend" class="value">0</div><div id="kPendPct" class="hint">0% del total filtrado</div></div>
-    <div class="card kpi accent-green"><div class="label">Cerradas</div><div id="kCerr" class="value">0</div><div id="kCerrPct" class="hint">0% del total filtrado</div></div>
-    <div class="card kpi accent-blue"><div class="label">Tiempo medio cierre</div><div id="kMedia" class="value">—</div><div class="hint">Actualizada - fecha creación INC., solo cerradas</div></div>
-    <div class="card kpi accent-red"><div class="label">Pendientes &gt; 7 días</div><div id="kViejas" class="value">0</div><div id="kViejasPct" class="hint">0% de pendientes</div></div>
-  </section>
-  <section class="grid layout">
-    <div class="card"><div class="section-title"><h2>Resumen por responsable</h2><span>carga y desempeño</span></div><div class="grid responsables" id="people"></div></div>
-    <div class="card"><div class="section-title"><h2>Embudo global</h2><span>entrada vs gestión</span></div><div class="chartbox"><canvas id="funnelChart"></canvas></div></div>
-  </section>
-  <section class="grid charts">
-    <div class="card"><div class="section-title"><h2>Pendientes por responsable</h2><span>estado actual</span></div><div class="chartbox"><canvas id="respChart"></canvas></div></div>
-    <div class="card"><div class="section-title"><h2>Cerradas por semana</h2><span>ritmo de cierre</span></div><div class="chartbox"><canvas id="weekChart"></canvas></div></div>
-  </section>
-  <section class="grid quality">
-    <div class="card"><div class="label muted">Código cliente no encontrado</div><div id="qNoClient" class="smallnum">0</div></div>
-    <div class="card"><div class="label muted">Cerradas sin Actualizada</div><div id="qNoClose" class="smallnum">0</div></div>
-    <div class="card"><div class="label muted">Actualizada anterior a creación</div><div id="qBadDates" class="smallnum">0</div></div>
-    <div class="card"><div class="label muted">Internas excluidas</div><div id="qInternas" class="smallnum">0</div></div>
-  </section>
-  <section class="card wide" style="margin-top:16px"><div class="section-title"><h2>Incidencias prioritarias y detalle</h2><span id="rowCount"></span></div><div style="overflow:auto;max-height:620px"><table><thead><tr><th>ID</th><th>Cliente</th><th>Tipo incidencia</th><th>Responsable</th><th>Estado</th><th>Creación</th><th>Cierre</th><th>Días cierre</th><th>Motivo / resumen</th></tr></thead><tbody id="tbody"></tbody></table></div></section>
+
+<header>
+    <h1>Gestión de Incidencias FAMATEL</h1>
+    <p>Visualización en tiempo real de rendimiento y calidad</p>
+</header>
+
+<div class="container">
+    <section class="upload-section">
+        <div class="file-input-wrapper">
+            <button class="btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                Seleccionar Archivo (XLSX, CSV, XML)
+            </button>
+            <input type="file" id="fileInput" accept=".xlsx, .xls, .csv, .xml" />
+        </div>
+        <p id="fileName" class="kpi-hint">No se ha seleccionado ningún archivo</p>
+    </section>
+
+    <div id="dashboard" style="display: none;">
+        <section class="kpis-grid">
+            <div class="kpi-card warning">
+                <div class="kpi-label">Pendientes</div>
+                <div id="kPend" class="kpi-value">0</div>
+                <div id="kPendPct" class="kpi-hint">0% del total</div>
+            </div>
+            <div class="kpi-card success">
+                <div class="kpi-label">Cerradas</div>
+                <div id="kCerr" class="kpi-value">0</div>
+                <div id="kCerrPct" class="kpi-hint">0% del total</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Tiempo Medio Cierre</div>
+                <div id="kMedia" class="kpi-value">—</div>
+                <div class="kpi-hint">Días naturales</div>
+            </div>
+            <div class="kpi-card danger">
+                <div class="kpi-label">Pendientes > 7 días</div>
+                <div id="kViejas" class="kpi-value">0</div>
+                <div id="kViejasPct" class="kpi-hint">0% de las pendientes</div>
+            </div>
+        </section>
+
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h2>Embudo Global <span>Carga vs Gestión</span></h2>
+                <div class="chart-container"><canvas id="funnelChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h2>Pendientes por Responsable <span>Estado actual</span></h2>
+                <div class="chart-container"><canvas id="respChart"></canvas></div>
+            </div>
+            <div class="chart-card" style="grid-column: span 2;">
+                <h2>Ritmo de Cierre <span>Cerradas por semana</span></h2>
+                <div class="chart-container"><canvas id="weekChart"></canvas></div>
+            </div>
+        </section>
+
+        <section class="table-card">
+            <h2>Detalle de Incidencias <span id="rowCount" style="font-weight: 400; font-size: 0.9rem; color: var(--muted); margin-left: 1rem;"></span></h2>
+            <div class="table-wrapper">
+                <table id="incidentsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Responsable</th>
+                            <th>Estado</th>
+                            <th>Creación</th>
+                            <th>Cierre</th>
+                            <th>Días</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
 </div>
-<div class="footer">Regla de responsable: informador Laura/Desiré se asigna a sí misma; informador Ana/Maria José se asigna por código cliente contra maestro. Internas excluidas por defecto.</div>
-</main>
+
 <script>
-let MASTER = [{"codigo":"10018","nombre":"ELECTRO VIZCAYA, S.A.  ##","linea":"Industrial - Gran Distribucion","grupo":"FEGIME","representante":"PEREZ GIL, ROBERTO","estado":"CLIENTE ACTIVO"},{"codigo":"10019","nombre":"PALACIOS ANTOLIN, ENRIQUE","linea":"Industrial - Gran Distribucion","grupo":"ALMACEN INDEPENDIENTE","representante":"BELOSO MURADAS, JOSE LUIS","estado":"CLIENTE INACTIVO"}]; // Truncated for brevity – replace with full data if needed.
-// Aquí iría el resto del script que procesa archivos, filtra, pinta gráficos, etc.
+    // Configuración Inicial
+    let MASTER = [
+        {"codigo":"10018","nombre":"ELECTRO VIZCAYA, S.A.","responsable":"ANA"},
+        {"codigo":"10019","nombre":"PALACIOS ANTOLIN, ENRIQUE","responsable":"MARIA JOSE"}
+    ];
+
+    const elements = {
+        fileInput: document.getElementById('fileInput'),
+        fileName: document.getElementById('fileName'),
+        dashboard: document.getElementById('dashboard'),
+        loader: document.getElementById('loader'),
+        tbody: document.getElementById('tbody'),
+        rowCount: document.getElementById('rowCount')
+    };
+
+    let charts = {};
+
+    elements.fileInput.addEventListener('change', handleFile);
+
+    function handleFile(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        elements.fileName.textContent = file.name;
+        elements.loader.style.display = 'flex';
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            try {
+                const data = evt.target.result;
+                let rows = [];
+
+                if (file.name.endsWith('.xml')) {
+                    rows = parseXML(data);
+                } else {
+                    const workbook = XLSX.read(data, { type: 'binary', cellDates: true });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    rows = XLSX.utils.sheet_to_json(sheet);
+                }
+
+                processData(rows);
+            } catch (err) {
+                alert('Error al procesar el archivo: ' + err.message);
+            } finally {
+                elements.loader.style.display = 'none';
+                elements.dashboard.style.display = 'block';
+            }
+        };
+
+        if (file.name.endsWith('.xml')) {
+            reader.readAsText(file);
+        } else {
+            reader.readAsBinaryString(file);
+        }
+    }
+
+    function parseXML(text) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(text, "text/xml");
+        const items = xmlDoc.getElementsByTagName("Row"); // Ajustar según estructura XML real
+        let results = [];
+        // Lógica simplificada de parseo XML
+        return results;
+    }
+
+    function processData(data) {
+        // 1. Limpieza y Enriquecimiento
+        const processed = data.map(row => {
+            const creacion = new Date(row['Fecha creación'] || row['Creación'] || row['Created'] || Date.now());
+            const cierre = row['Fecha cierre'] || row['Cierre'] || row['Closed'] ? new Date(row['Fecha cierre'] || row['Cierre'] || row['Closed']) : null;
+            
+            let dias = null;
+            if (cierre) {
+                dias = Math.floor((cierre - creacion) / (1000 * 60 * 60 * 24));
+            }
+
+            return {
+                id: row['ID'] || row['Nº'] || '?',
+                cliente: row['Cliente'] || row['Nombre'] || 'S/N',
+                responsable: row['Responsable'] || 'No asignado',
+                estado: (row['Estado'] || '').toLowerCase().includes('cerr') ? 'Cerrada' : 'Pendiente',
+                creacion,
+                cierre,
+                dias
+            };
+        });
+
+        updateUI(processed);
+    }
+
+    function updateUI(data) {
+        const pendientes = data.filter(d => d.estado === 'Pendiente');
+        const cerradas = data.filter(d => d.estado === 'Cerrada');
+        const hoy = new Date();
+        const muyViejas = pendientes.filter(d => (hoy - d.creacion) / (1000 * 60 * 60 * 24) > 7);
+
+        // KPIs
+        document.getElementById('kPend').textContent = pendientes.length;
+        document.getElementById('kPendPct').textContent = Math.round((pendientes.length / data.length) * 100) + '% del total';
+        
+        document.getElementById('kCerr').textContent = cerradas.length;
+        document.getElementById('kCerrPct').textContent = Math.round((cerradas.length / data.length) * 100) + '% del total';
+
+        const sumaDias = cerradas.reduce((acc, curr) => acc + (curr.dias || 0), 0);
+        document.getElementById('kMedia').textContent = cerradas.length ? (sumaDias / cerradas.length).toFixed(1) : '—';
+
+        document.getElementById('kViejas').textContent = muyViejas.length;
+        document.getElementById('kViejasPct').textContent = pendientes.length ? Math.round((muyViejas.length / pendientes.length) * 100) + '% de pendientes' : '0%';
+
+        // Tabla
+        elements.tbody.innerHTML = '';
+        data.slice(0, 100).forEach(d => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${d.id}</td>
+                <td>${d.cliente}</td>
+                <td>${d.responsable}</td>
+                <td><span class="status-pill status-${d.estado.toLowerCase()}">${d.estado}</span></td>
+                <td>${d.creacion.toLocaleDateString()}</td>
+                <td>${d.cierre ? d.cierre.toLocaleDateString() : '-'}</td>
+                <td>${d.dias !== null ? d.dias : '-'}</td>
+            `;
+            elements.tbody.appendChild(tr);
+        });
+        elements.rowCount.textContent = `Mostrando ${Math.min(data.length, 100)} de ${data.length} incidencias`;
+
+        // Gráficos
+        renderCharts(data, pendientes, cerradas);
+    }
+
+    function renderCharts(data, pendientes, cerradas) {
+        // Destruir existentes si hay
+        Object.values(charts).forEach(c => c.destroy());
+
+        // 1. Embudo
+        charts.funnel = new Chart(document.getElementById('funnelChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Pendientes', 'Cerradas'],
+                datasets: [{
+                    data: [pendientes.length, cerradas.length],
+                    backgroundColor: ['#f59e0b', '#10b981'],
+                    borderWidth: 0
+                }]
+            },
+            options: { cutout: '70%', maintainAspectRatio: false }
+        });
+
+        // 2. Por Responsable
+        const respCounts = {};
+        pendientes.forEach(p => {
+            respCounts[p.responsable] = (respCounts[p.responsable] || 0) + 1;
+        });
+
+        charts.resp = new Chart(document.getElementById('respChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(respCounts),
+                datasets: [{
+                    label: 'Incidencias',
+                    data: Object.values(respCounts),
+                    backgroundColor: '#2563eb',
+                    borderRadius: 8
+                }]
+            },
+            options: { maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        });
+
+        // 3. Ritmo Semanal
+        const weeks = {};
+        cerradas.forEach(c => {
+            const week = getWeek(c.cierre);
+            weeks[week] = (weeks[week] || 0) + 1;
+        });
+
+        charts.week = new Chart(document.getElementById('weekChart'), {
+            type: 'line',
+            data: {
+                labels: Object.keys(weeks).sort(),
+                datasets: [{
+                    label: 'Cierres',
+                    data: Object.values(weeks),
+                    borderColor: '#6366f1',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)'
+                }]
+            },
+            options: { maintainAspectRatio: false }
+        });
+    }
+
+    function getWeek(date) {
+        const d = new Date(date);
+        const dayNum = d.getUTCDay() || 7;
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+        const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+        const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+        return `W${weekNo} - ${d.getUTCFullYear()}`;
+    }
 </script>
+
 </body>
 </html>
