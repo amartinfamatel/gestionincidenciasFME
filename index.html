@@ -4,8 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Dashboard Incidencias FAMATEL v16</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="libs/xlsx.full.min.js"></script>
+<script src="libs/chart.umd.min.js"></script>
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#68758b;--line:#e7eaf0;--blue:#2364aa;--green:#1d8b62;--amber:#d99016;--red:#c2413a;--purple:#7157d9;--shadow:0 10px 30px rgba(25,38,66,.08);--r:18px}
 *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
@@ -20,7 +20,17 @@ header{position:sticky;top:0;z-index:20;background:rgba(245,247,251,.92);backdro
 <header><div class="wrap top"><div class="brand"><h1>Dashboard de Incidencias</h1><p>Gestión operativa por estado, responsable, tipo de incidencia y tiempos de cierre.</p></div><div class="actions"><label class="btn primary file">Cargar incidencias<input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.xml" /></label><label class="btn file">Actualizar maestro<input id="masterInput" type="file" accept=".xlsx,.xls,.csv" /></label><button class="btn" id="clearBtn">Limpiar info</button><button class="btn" id="exportBtn">Exportar CSV</button></div></div></header>
 <main class="wrap">
 <div id="empty" class="msg">Carga el archivo de incidencias de Mantis. El maestro de clientes ya está precargado; usa “Limpiar info” para vaciar el dashboard y empezar de nuevo.</div>
-<div id="dash" class="hidden">
+<div id="dash">
+  <!-- Dashboard will be shown after initialization -->
+</div>
+<script>
+  // Simple init: show dashboard container on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    const dash = document.getElementById('dash');
+    if (dash) dash.classList.remove('hidden');
+    console.log('Dashboard initialized');
+  });
+</script>
   <div class="filters card">
     <input id="q" placeholder="Buscar ID, cliente, resumen..." />
     <select id="responsable"><option value="">Responsable: todos</option></select>
