@@ -3,9 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dashboard Incidencias FAMATEL v16</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<title>Dashboard Incidencias FAMATEL</title>
+<script>
+// Carga librerías desde carpeta local ./libs. Si no existen, intenta usar CDN.
+(function(){
+  function loadScript(localSrc, cdnSrc){
+    document.write('<script src="' + localSrc + '" onerror="this.onerror=null;this.src=\'' + cdnSrc + '\'"><\/script>');
+  }
+  loadScript('./libs/xlsx.full.min.js', 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
+  loadScript('./libs/chart.umd.min.js', 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js');
+})();
+</script>
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#68758b;--line:#e7eaf0;--blue:#2364aa;--green:#1d8b62;--amber:#d99016;--red:#c2413a;--purple:#7157d9;--shadow:0 10px 30px rgba(25,38,66,.08);--r:18px}
 *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
