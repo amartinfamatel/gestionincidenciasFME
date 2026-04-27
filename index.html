@@ -155,6 +155,21 @@ function quickFilter(resp,state){
 function clearDashboard(){ allRows=[]; filtered=[]; charts.forEach(c=>c.destroy()); charts=[]; $('tbody').innerHTML=''; $('dash').classList.add('hidden'); $('empty').classList.remove('hidden'); $('empty').innerHTML='Carga el archivo de incidencias de Mantis. El maestro de clientes ya está precargado; usa “Limpiar info” para vaciar el dashboard y empezar de nuevo.'; $('fileInput').value=''; $('q').value=''; $('responsable').innerHTML='<option value="">Responsable: todos</option>'; $('estado').innerHTML=''; $('tipoPend').value=''; $('categoria').innerHTML='<option value="">Tipo incidencia: todas</option>'; }
 function exportCSV(){ const cols=['id','cliente','nombre','segmentoCliente','categoria','responsable','informador','estado','tipoPend','fechaCreacion','fechaEnvio','diasGestion','motivo','resumen']; const lines=[cols.join(';')].concat(filtered.map(r=>cols.map(c=>{let v=r[c]; if(v instanceof Date)v=fmtDate(v); return '"'+String(v??'').replaceAll('"','""')+'"'}).join(';'))); const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='analisis_incidencias.csv'; a.click(); }
 $('fileInput').addEventListener('change',e=>e.target.files[0]&&readFile(e.target.files[0])); $('masterInput').addEventListener('change',e=>e.target.files[0]&&readFile(e.target.files[0],true)); ['q','responsable','estado','tipoPend','categoria','internas'].forEach(id=>$(id).addEventListener('input',applyFilters)); $('exportBtn').addEventListener('click',exportCSV); $('clearBtn').addEventListener('click',clearDashboard); $('clearFiltersBtn').addEventListener('click',clearStateFilters);
+
+async function cargarDatosIniciales(){
+  try{
+    const res = await fetch('./data/incidencias.xml', { cache: 'no-store' });
+    if(!res.ok) return;
+    const text = await res.text();
+    const rows = parseExcelXml(text);
+    if(!rows.length) return;
+    process(rows);
+    $('empty').innerHTML = 'Datos precargados desde <b>data/incidencias.xml</b>. También puedes cargar otro archivo manualmente.';
+  }catch(err){
+    console.warn('No se pudo precargar data/incidencias.xml', err);
+  }
+}
+window.addEventListener('DOMContentLoaded', cargarDatosIniciales);
 </script>
 </body>
 </html>
